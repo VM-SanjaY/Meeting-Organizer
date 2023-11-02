@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meeting Organizer</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/logo.png' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/styles.min.css' %}" />
+  <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    </style>
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div style="margin-top: 20px;" class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="#" class="text-nowrap logo-img">
+            <img src="{% static 'assets/images/logos/logo.png' %}" width="80" alt="" /><span style="font-size: x-large;color: black;"> Organizer</span>
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Home</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'meetings' %}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-layout-dashboard"></i>
+                </span>
+                <span class="hide-menu">Meetings</span>
+              </a>
+            </li>
+          </ul>
+        
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+        <nav class="navbar navbar-expand-lg navbar-light">
+          <ul class="navbar-nav">
+            <li class="nav-item d-block d-xl-none">
+              <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
+                <i class="ti ti-menu-2"></i>
+              </a>
+            </li>           
+          </ul>
+          <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+              <li class="nav-item dropdown">
+
+                  <a href="{% url 'logoutpage' %}"><img src="{% static 'assets/images/logos/logout.jpg' %}" alt="derh" width="35" height="35" class="rounded-circle"></a>
+               
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!--  Header End -->
+      <div class="container-fluid">
+        <div class="container-fluid">
+          <div class="card">
+            {% if messages %}
+              <ul style="text-align: center;" class="messages">
+                  {% for message in messages %}
+                  <li style="color: rgb(25, 115, 219);" {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
+            <div class="card-body">
+              <h5 class="card-title fw-semibold mb-4">Mettings</h5>
+              <div class="card">
+                <div class="card-body">
+                  <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="exampleInputtext1" class="form-label">Title</label>
+                      <input type="text" class="form-control" name ="title" id="exampleInputtext1" aria-describedby="textHelp">
+                      {% if meeting_errors %}
+                      <div style="color: red;">{{meeting_errors.title}}</div>
+                      {% endif %}
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label">Description</label>
+                      <input type="text" class="form-control" id="exampleInputEmail1" name ="description" aria-describedby="emailHelp">
+                      {% if meeting_errors %}
+                      <div style="color: red;">{{meeting_errors.description}}</div>
+                      {% endif %}
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">Date & Time</label>
+                      <input type="datetime-local" class="form-control" id="exampleInputPassword1" name="date">
+                      {% if meeting_errors %}
+                      <div style="color: red;">{{meeting_errors.dateandtime}}</div>
+                      {% endif %}
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">Members</label>
+                      <label for="members" style="margin-right: 20px;"> </label>
+                      <select style="width: 980px; border-color: #e3dfd7; border-radius: 10px;" name="members[]" id="members" multiple>
+                        {% for user in userdetail %}
+                          {% if user != request.user %}
+                            <option value="{{user.username}}">{{user.username}}</option>
+                          {% endif %}
+                        {% endfor %}
+                      </select>
+                      {% if meeting_errors %}
+                      <div style="color: red;">{{meeting_errors.members}}</div>
+                      {% endif %}
+                    </div>
+                    <div style="text-align: center;">
+                    <button style="background-color: palegoldenrod; width: 100px;height: 30px; font-weight: 700;border: none;border-radius: 10px;" type="submit">Submit</button>
+                    </div>              
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
